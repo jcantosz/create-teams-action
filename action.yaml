@@ -1,0 +1,24 @@
+name: "Create teams"
+description: "Creates empty teams and optionally attach an idp group"
+inputs:
+  # Auth params
+  pat:
+    description: "The PAT used to authenticate."
+    required: false
+  app_id:
+    description: "The GitHub App ID used to authenticate."
+    required: false
+  app_private_key:
+    description: "The GitHub App private key used to authenticate."
+    required: false
+  app_installation_id:
+    description: "The GitHub App installation id used to authenticate."
+    required: false
+  api_url:
+    description: "GitHub API url. Change this if using GitHub Enterprise Server."
+    required: false
+    default: "https://api.github.com"
+
+runs:
+  using: "node20"
+  main: "dist/index.js"
