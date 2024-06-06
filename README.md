@@ -9,7 +9,7 @@ Requires either a Fine-Grained Token or an GitHub App per the API docs.
 
 ## Example workflow
 
-Workflow to add a team with a group
+Workflow to add a team and optionally link an IDP group to it
 
 ```yaml create-repo.yaml
 name: Create repo from issue submission
@@ -38,23 +38,28 @@ jobs:
           org: ${{ steps.issue-parser.outputs.issueparser_org }}
           # The type of enterprise to add groups to
           enterprise_type: "cloud"
-          admin_teams: "GITHUB_TEAM_NAME_1:IDP_GROUP_NAME_1,GITHUB_TEAM_NAME_2:IDP_GROUP_NAME_2"
+          admin_teams: ${{ steps.issue-parser.outputs.issueparser_admin_teams }} # "GITHUB_TEAM_NAME_1:IDP_GROUP_NAME_1,GITHUB_TEAM_NAME_2:IDP_GROUP_NAME_2"
 ```
 
 ## Parameters
 
-| Parameter           | Description                                          | Default | Required | Note                                           |
-| ------------------- | ---------------------------------------------------- | ------- | -------- | ---------------------------------------------- |
-| pat                 | The PAT used to authenticate.                        | `none`  | `false`  |                                                |
-| app_id              | The GitHub App ID used to authenticate.              | `none`  | `false`  |                                                |
-| app_private_key     | The GitHub App private key used to authenticate.     | `none`  | `false`  |                                                |
-| app_installation_id | The GitHub app installation ID used to authenticate. | `none`  | `false`  |                                                |
-| api_url             | GitHub API URL.                                      | `none`  | `false`  | Change this if using GitHub Enterprise Server. |
-| org                 | The organization to create the teamsin.              | `none`  | `true`   |                                                |
+| Parameter           | Description                                                                                                                                           | Default  | Required | Note                                                                                                                                                            |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| pat                 | The PAT used to authenticate.                                                                                                                         | `none`   | `false`  | If using a PAT and adding groups to a teams, that PAT must be a fine grained PAT with the `Members` organization permission.                                    |
+| app_id              | The GitHub App ID used to authenticate.                                                                                                               | `none`   | `false`  |                                                                                                                                                                 |
+| app_private_key     | The GitHub App private key used to authenticate.                                                                                                      | `none`   | `false`  |                                                                                                                                                                 |
+| app_installation_id | The GitHub app installation ID used to authenticate.                                                                                                  | `none`   | `false`  |                                                                                                                                                                 |
+| api_url             | GitHub API URL.                                                                                                                                       | `none`   | `false`  | Change this if using GitHub Enterprise Server.                                                                                                                  |
+| org                 | The organization to create the teams in.                                                                                                              | `none`   | `true`   |                                                                                                                                                                 |
+| enterprise_type     | Type of enterprise we are adding teams/groups to. Required for IDP group logic. Can be `cloud`, `emu`, `server`.                                      | `cloud`  | `false`  | `emu` and `server` use same logic/endpoints.                                                                                                                    |
+| team_visibility     | The visibility of the teams being created. Can be `closed`, `secret`.                                                                                 | `closed` | `false`  | `secret` - only visible to organization owners and members of this team. `closed` - visible to all members of this organization.                                |
+| admin_groups        | Input groups. Expected form is a string formatted like this: `<GitHub_Team_1_Name>:<Entra_Group_1_Name>,<GitHub_Team_2_Name>:<Entra_Group_2_Name>...` | `none`   | `false`  | Exists for compatibility with larger workflow that provisions multiple GitHub groups with varying permission levels. Could be combined into single group input. |
+| maintain_groups     | Input groups. Functionality is identical to `admin_groups`, either or both can be set                                                                 | `none`   | `false`  | Exists for compatibility with larger workflow that provisions multiple GitHub groups with varying permission levels. Could be combined into single group input. |
+| write_groups        | Input groups. Functionality is identical to `admin_groups`, either or both can be set                                                                 | `none`   | `false`  | Exists for compatibility with larger workflow that provisions multiple GitHub groups with varying permission levels. Could be combined into single group input. |
+| triage_groups       | Input groups. Functionality is identical to `admin_groups`, either or both can be set                                                                 | `none`   | `false`  | Exists for compatibility with larger workflow that provisions multiple GitHub groups with varying permission levels. Could be combined into single group input. |
+| read_groups         | Input groups. Functionality is identical to `admin_groups`, either or both can be set                                                                 | `none`   | `false`  | Exists for compatibility with larger workflow that provisions multiple GitHub groups with varying permission levels. Could be combined into single group input. |
 
 ## Sample issue template
-
-TODO
 
 ```yaml add_entra_group.yaml
 name: Create team
@@ -68,6 +73,12 @@ body:
       label: Repository Org
       description: "The org of the repository to create"
       placeholder: "my-org"
+  - type: input
+    id: admin_teams
+    attributes:
+      label: Admin Teams
+      description: "The teams and groups ("TEAM_NAME:IDP_GROUP_NAME,TEAM_NAME:IDP_GROUP_NAME") to create/link
+      placeholder: TEAM_NAME1:IDP_GROUP_NAME1,TEAM_NAME2:IDP_GROUP_NAME2
   ...
 
 ```

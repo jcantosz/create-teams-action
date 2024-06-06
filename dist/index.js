@@ -39199,7 +39199,8 @@ const emuIDP = __nccwpck_require__(8226);
 const { EnterpriseType } = __nccwpck_require__(8928);
 
 async function addIDPGroupToTeam(octokit, org, type, teamSlug, groupId) {
-  const idpFunctions = type == EnterpriseType.EMU ? emuIDP : cloudIDP;
+  // EMUs and GHES use the 'external-groups' endpoints, cloud uses team-sync
+  const idpFunctions = type == EnterpriseType.CLOUD ? cloudIDP : emuIDP;
 
   const idpGroup = await idpFunctions.getIDPGroupByName(octokit, org, groupId);
   if (idpGroup) {
@@ -39225,12 +39226,17 @@ const EnterpriseType = Object.freeze({
   SERVER: Symbol("server"),
 });
 
+function error(message) {
+  core.setFailed(message);
+  throw new Error(err || message);
+}
+
 function getInputs() {
   const enterpriseTypeInput = core.getInput("enterprise_type").trim().toUpperCase();
   const enterpriseType =
-    enterpriseTypeInput in Visibility
-      ? Visibility[enterpriseTypeInput]
-      : error(`Visibility must be one of: ${Object.values(Visibility)}`);
+    enterpriseTypeInput in EnterpriseType
+      ? EnterpriseType[enterpriseTypeInput]
+      : error(`enterprise_type must be one of: ${Object.values(EnterpriseType)}`);
 
   return {
     auth: {
@@ -42719,47 +42725,10 @@ async function main() {
   await createTeams(auth.octokit, auth.type, inputs.enterpriseType, inputs.org, teamsArray, inputs.visibility);
 }
 
-async function trial() {
-  const input = {
-    auth: {
-      PAT: process.env["GITHUB_TOKEN"],
-      apiUrl: core.getInput("api_url") || "https://api.github.com",
-    },
-    teams: {
-      admin: "aaa:xxxxz,bbb:zzz,ccc",
-      push: "ddd:zzz",
-      pull: "",
-      // admin: "aaa,bbb,ccc",
-      // push: "ddd",
-      // pull: "",
-    },
-  };
-  const auth = createOctokitInstance(input.auth);
-
-  let teamsArray = teamsToArray(input.teams);
-  //teamsArray.uniqueGroups = getUniqueGroups(teamsArray);
-
-  teamsArray.map((element) => {
-    if (element.idp_group == "zzz") element.idp_group_name = "ds";
-  });
-  console.log(teamsArray);
-
-  outputGroups(teamsArray);
-
-  //console.log(teamsArray.uniqueGroups);
-  for (const team of teamsArray) {
-    console.log(`team: ${JSON.stringify(team)}`);
-  }
-  //console.log(`teamsArray: ${teamsArray}`);
-  //createTeams(auth.octokit, auth.type, "jcantosz-test-org", teamsArray);
-}
 // Only run main if called directly
 if (require.main === require.cache[eval('__filename')]) {
   main();
 }
-
-trial();
-//main();
 
 })();
 

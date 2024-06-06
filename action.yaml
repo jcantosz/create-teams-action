@@ -19,6 +19,32 @@ inputs:
     required: false
     default: "https://api.github.com"
 
+  enterprise_type:
+    description: 'Type of enterprise we are adding teams/groups to. Required for IDP group logic. Can be "cloud", "emu", "server".'
+    required: false
+    default: "cloud"
+
+  team_visibility:
+    description: 'The visibility of the teams being created. Can be "closed", "secret".'
+    required: false
+    default: "closed"
+
+  admin_groups:
+    description: 'Input groups. Expected form is a string formatted like this: "<GitHub_Team_1_Name>:<Entra_Group_1_Name>,<GGitHub_Team_2_Name>:<Entra_Group_2_Name>..."'
+    required: false
+  maintain_groups:
+    description: 'Input groups. Functionality is identical to "admin_groups", either or both can be set'
+    required: false
+  write_groups:
+    description: 'Input groups. Functionality is identical to "admin_groups", either or both can be set'
+    required: false
+  triage_groups:
+    description: 'Input groups. Functionality is identical to "admin_groups", either or both can be set'
+    required: false
+  read_groups:
+    description: 'Input groups. Functionality is identical to "admin_groups", either or both can be set'
+    required: false
+
 runs:
   using: "node20"
   main: "dist/index.js"

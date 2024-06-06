@@ -6,12 +6,17 @@ const EnterpriseType = Object.freeze({
   SERVER: Symbol("server"),
 });
 
+function error(message) {
+  core.setFailed(message);
+  throw new Error(err || message);
+}
+
 function getInputs() {
   const enterpriseTypeInput = core.getInput("enterprise_type").trim().toUpperCase();
   const enterpriseType =
-    enterpriseTypeInput in Visibility
-      ? Visibility[enterpriseTypeInput]
-      : error(`Visibility must be one of: ${Object.values(Visibility)}`);
+    enterpriseTypeInput in EnterpriseType
+      ? EnterpriseType[enterpriseTypeInput]
+      : error(`enterprise_type must be one of: ${Object.values(EnterpriseType)}`);
 
   return {
     auth: {
