@@ -40,9 +40,14 @@ async function createGitHubTeam(octokit, org, team, teamVisibility) {
 }
 
 async function createTeamIfNotExist(octokit, org, team, teamVisibility) {
+  // Not from docs: To create the slug, GitHub replaces special characters in the name string, changes all words to lowercase, and replaces spaces with a - separator. For example, "My TEam Näme" would become my-team-name.
   // Replace all disallowed special chars with "-" (allow "_").
   // Then remove any special chars at beginning or end of string. If the slug is empty the team name is "team"
-  const teamSlug = team.replace(/\W+/g, "-").replace(/^\W|\W$/g, "") || "team";
+  const teamSlug =
+    team
+      .replace(/\W+/g, "-")
+      .replace(/^\W|\W$/g, "")
+      .toLowerCase() || "team";
 
   core.info(`Checking if team "${team}" (slug "${teamSlug}") already exists in org "${org}".`);
   if (!(await teamExists(octokit, org, teamSlug))) {
