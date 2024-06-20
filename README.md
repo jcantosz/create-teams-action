@@ -14,13 +14,13 @@ Workflow to add a team and optionally link an IDP group to it
 ```yaml create-repo.yaml
 name: Create repo from issue submission
 on:
-  issue:
+  issues:
     types:
       - opened
 jobs:
   AddGroups:
     runs-on: ubuntu-latest
-    jobs:
+    steps:
       - name: Checkout
         uses: actions/checkout@v4
 
