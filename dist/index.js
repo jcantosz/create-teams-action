@@ -39085,27 +39085,19 @@ async function addGroupToTeam(octokit, org, teamSlug, group) {
 
 async function getIDPGroups(octokit, org) {
   if (!groups) {
-    groups = await octokit.paginate(
-      "GET /orgs/{org}/team-sync/groups",
-      {
-        org: org,
-        headers: {
-          "X-GitHub-Api-Version": "2022-11-28",
-        },
+    groups = await octokit.paginate("GET /orgs/{org}/team-sync/groups", {
+      org: org,
+      headers: {
+        "X-GitHub-Api-Version": "2022-11-28",
       },
-      (response) => {
-        response.data.map((resp) => {
-          resp.groups;
-        });
-      }
-    );
+    });
   }
   return groups;
 }
 
 async function getIDPGroupById(octokit, org, id) {
   const idpGroups = await getIDPGroups(octokit, org);
-  for (const group of idpGroups) {
+  for (const group of idpGroups.groups) {
     if (group.group_id == id) {
       return group;
     }
@@ -39115,7 +39107,7 @@ async function getIDPGroupById(octokit, org, id) {
 
 async function getIDPGroupByName(octokit, org, name) {
   const idpGroups = await getIDPGroups(octokit, org);
-  for (const group of idpGroups) {
+  for (const group of idpGroups.groups) {
     if (group.group_name == name) {
       return group;
     }
@@ -39149,27 +39141,19 @@ async function addGroupToTeam(octokit, org, teamSlug, group) {
 
 async function getIDPGroups(octokit, org) {
   if (!groups) {
-    groups = await octokit.paginate(
-      "GET /orgs/{org}/external-groups",
-      {
-        org: org,
-        headers: {
-          "X-GitHub-Api-Version": "2022-11-28",
-        },
+    groups = await octokit.paginate("GET /orgs/{org}/external-groups", {
+      org: org,
+      headers: {
+        "X-GitHub-Api-Version": "2022-11-28",
       },
-      (response) => {
-        response.data.map((resp) => {
-          resp.groups;
-        });
-      }
-    );
+    });
   }
   return groups;
 }
 
 async function getIDPGroupById(octokit, org, id) {
   const idpGroups = await getIDPGroups(octokit, org);
-  for (const group of idpGroups) {
+  for (const group of idpGroups.groups) {
     if (group.group_id == id) {
       return group;
     }
@@ -39179,7 +39163,7 @@ async function getIDPGroupById(octokit, org, id) {
 
 async function getIDPGroupByName(octokit, org, name) {
   const idpGroups = await getIDPGroups(octokit, org);
-  for (const group of idpGroups) {
+  for (const group of idpGroups.groups) {
     if (group.group_name == name) {
       return group;
     }
@@ -42722,7 +42706,7 @@ function teamsToArray(teams) {
 
 async function main() {
   const inputs = getInputs();
-  core.debug(`inputs: ${inputs}`);
+  core.debug(`inputs: ${JSON.stringify(inputs)}`);
 
   const auth = createOctokitInstance(inputs.auth);
   const teamsArray = teamsToArray(inputs.teams);

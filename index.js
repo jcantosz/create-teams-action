@@ -36,7 +36,7 @@ function teamsToArray(teams) {
 
 async function main() {
   const inputs = getInputs();
-  core.debug(`inputs: ${inputs}`);
+  core.debug(`inputs: ${JSON.stringify(inputs)}`);
 
   const auth = createOctokitInstance(inputs.auth);
   const teamsArray = teamsToArray(inputs.teams);
