@@ -1,18 +1,19 @@
 const core = require("@actions/core");
 
 const EnterpriseType = Object.freeze({
-  EMU: Symbol("emu"),
-  CLOUD: Symbol("cloud"),
-  SERVER: Symbol("server"),
+  EMU: "emu",
+  CLOUD: "cloud",
+  SERVER: "server",
 });
 
-function error(message) {
+function error(message, err = null) {
   core.setFailed(message);
   throw new Error(err || message);
 }
 
 function getInputs() {
   const enterpriseTypeInput = core.getInput("enterprise_type").trim().toUpperCase();
+  console.log(enterpriseTypeInput);
   const enterpriseType =
     enterpriseTypeInput in EnterpriseType
       ? EnterpriseType[enterpriseTypeInput]

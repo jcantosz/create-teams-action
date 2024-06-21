@@ -29,20 +29,20 @@ inputs:
     required: false
     default: "closed"
 
-  admin_groups:
+  admin_teams:
     description: 'Input groups. Expected form is a string formatted like this: "<GitHub_Team_1_Name>:<Entra_Group_1_Name>,<GGitHub_Team_2_Name>:<Entra_Group_2_Name>..."'
     required: false
-  maintain_groups:
-    description: 'Input groups. Functionality is identical to "admin_groups", either or both can be set'
+  maintain_teams:
+    description: 'Input groups. Functionality is identical to "admin_teams", either or both can be set'
     required: false
-  write_groups:
-    description: 'Input groups. Functionality is identical to "admin_groups", either or both can be set'
+  write_teams:
+    description: 'Input groups. Functionality is identical to "admin_teams", either or both can be set'
     required: false
-  triage_groups:
-    description: 'Input groups. Functionality is identical to "admin_groups", either or both can be set'
+  triage_teams:
+    description: 'Input groups. Functionality is identical to "admin_teams", either or both can be set'
     required: false
-  read_groups:
-    description: 'Input groups. Functionality is identical to "admin_groups", either or both can be set'
+  read_teams:
+    description: 'Input groups. Functionality is identical to "admin_teams", either or both can be set'
     required: false
 
 runs:

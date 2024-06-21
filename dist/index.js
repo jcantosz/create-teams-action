@@ -39226,18 +39226,19 @@ module.exports = {
 const core = __nccwpck_require__(6150);
 
 const EnterpriseType = Object.freeze({
-  EMU: Symbol("emu"),
-  CLOUD: Symbol("cloud"),
-  SERVER: Symbol("server"),
+  EMU: "emu",
+  CLOUD: "cloud",
+  SERVER: "server",
 });
 
-function error(message) {
+function error(message, err = null) {
   core.setFailed(message);
   throw new Error(err || message);
 }
 
 function getInputs() {
   const enterpriseTypeInput = core.getInput("enterprise_type").trim().toUpperCase();
+  console.log(enterpriseTypeInput);
   const enterpriseType =
     enterpriseTypeInput in EnterpriseType
       ? EnterpriseType[enterpriseTypeInput]
@@ -42721,11 +42722,11 @@ function teamsToArray(teams) {
 
 async function main() {
   const inputs = getInputs();
-  core.debug(`inputs: ${JSON.parse(inputs)}`);
+  core.debug(`inputs: ${inputs}`);
 
   const auth = createOctokitInstance(inputs.auth);
   const teamsArray = teamsToArray(inputs.teams);
-  core.debug(`teamsArray: ${JSON.parse(teamsArray)}`);
+  core.debug(`teamsArray: ${teamsArray}`);
 
   await createTeams(auth.octokit, auth.type, inputs.enterpriseType, inputs.org, teamsArray, inputs.visibility);
 }
