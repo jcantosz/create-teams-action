@@ -28,6 +28,9 @@ inputs:
     description: 'The visibility of the teams being created. Can be "closed", "secret".'
     required: false
     default: "closed"
+  org:
+    description: "The organization with the team and the repo."
+    required: true
 
   admin_teams:
     description: 'Input groups. Expected form is a string formatted like this: "<GitHub_Team_1_Name>:<Entra_Group_1_Name>,<GGitHub_Team_2_Name>:<Entra_Group_2_Name>..."'
