@@ -1,4 +1,3 @@
-let groups;
 async function addGroupToTeam(octokit, org, teamSlug, group) {
   await octokit.request("PATCH /orgs/{org}/teams/{team_slug}/external-groups", {
     org: org,
@@ -11,15 +10,12 @@ async function addGroupToTeam(octokit, org, teamSlug, group) {
 }
 
 async function getIDPGroups(octokit, org) {
-  if (!groups) {
-    groups = await octokit.paginate("GET /orgs/{org}/external-groups", {
-      org: org,
-      headers: {
-        "X-GitHub-Api-Version": "2022-11-28",
-      },
-    });
-  }
-  return groups;
+  return await octokit.paginate("GET /orgs/{org}/external-groups", {
+    org: org,
+    headers: {
+      "X-GitHub-Api-Version": "2022-11-28",
+    },
+  });
 }
 
 async function getIDPGroupById(octokit, org, id) {
