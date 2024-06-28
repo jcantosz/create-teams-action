@@ -39069,8 +39069,9 @@ module.exports = {
 /***/ }),
 
 /***/ 2754:
-/***/ ((module) => {
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
+const core = __nccwpck_require__(6150);
 async function addGroupToTeam(octokit, org, teamSlug, group) {
   await octokit.request("PATCH /orgs/{org}/teams/{team_slug}/team-sync/group-mappings", {
     org: org,
@@ -39093,8 +39094,14 @@ async function getIDPGroups(octokit, org) {
 
 async function getIDPGroupById(octokit, org, id) {
   const idpGroups = await getIDPGroups(octokit, org);
+  core.debug(`Got groups ${JSON.stringify(idpGroups)}`);
+  if (!idpGroups) {
+    core.info("No idp groups returned");
+    return;
+  }
   for (const group of idpGroups.groups) {
     if (group.group_id == id) {
+      core.info(`Group found! id: "${group.group_id}" name: "${group.group_name}"`);
       return group;
     }
   }
@@ -39103,8 +39110,14 @@ async function getIDPGroupById(octokit, org, id) {
 
 async function getIDPGroupByName(octokit, org, name) {
   const idpGroups = await getIDPGroups(octokit, org);
+  core.debug(`Got groups ${JSON.stringify(idpGroups)}`);
+  if (!idpGroups) {
+    core.info("No idp groups returned");
+    return;
+  }
   for (const group of idpGroups.groups) {
     if (group.group_name == name) {
+      core.info(`Group found! id: "${group.group_id}" name: "${group.group_name}"`);
       return group;
     }
   }
@@ -39121,8 +39134,9 @@ module.exports = {
 /***/ }),
 
 /***/ 8226:
-/***/ ((module) => {
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
+const core = __nccwpck_require__(6150);
 async function addGroupToTeam(octokit, org, teamSlug, group) {
   await octokit.request("PATCH /orgs/{org}/teams/{team_slug}/external-groups", {
     org: org,
@@ -39145,8 +39159,14 @@ async function getIDPGroups(octokit, org) {
 
 async function getIDPGroupById(octokit, org, id) {
   const idpGroups = await getIDPGroups(octokit, org);
+  core.debug(`Got groups ${JSON.stringify(idpGroups)}`);
+  if (!idpGroups) {
+    core.info("No idp groups returned");
+    return;
+  }
   for (const group of idpGroups.groups) {
     if (group.group_id == id) {
+      core.info(`Group found! id: "${group.group_id}" name: "${group.group_name}"`);
       return group;
     }
   }
@@ -39155,8 +39175,13 @@ async function getIDPGroupById(octokit, org, id) {
 
 async function getIDPGroupByName(octokit, org, name) {
   const idpGroups = await getIDPGroups(octokit, org);
+  if (!idpGroups) {
+    core.info("No idp groups returned");
+    return;
+  }
   for (const group of idpGroups.groups) {
     if (group.group_name == name) {
+      core.info(`Group found! id: "${group.group_id}" name: "${group.group_name}"`);
       return group;
     }
   }
@@ -39175,17 +39200,21 @@ module.exports = {
 /***/ 6557:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
+const core = __nccwpck_require__(6150);
 const cloudIDP = __nccwpck_require__(2754);
 const emuIDP = __nccwpck_require__(8226);
 const { EnterpriseType } = __nccwpck_require__(8928);
 
-async function addIDPGroupToTeam(octokit, org, type, teamSlug, groupId) {
+async function addIDPGroupToTeam(octokit, org, type, teamSlug, groupName) {
   // EMUs and GHES use the 'external-groups' endpoints, cloud uses team-sync
   const idpFunctions = type == EnterpriseType.CLOUD ? cloudIDP : emuIDP;
 
-  const idpGroup = await idpFunctions.getIDPGroupByName(octokit, org, groupId);
+  const idpGroup = await idpFunctions.getIDPGroupByName(octokit, org, groupName);
   if (idpGroup) {
     await idpFunctions.addGroupToTeam(octokit, org, teamSlug, idpGroup);
+    core.info(`group "${groupName}" not found, added to team "${teamSlug}" `);
+  } else {
+    core.warning(`group "${groupName}" not found, could not be added to team "${teamSlug}" `);
   }
 }
 
