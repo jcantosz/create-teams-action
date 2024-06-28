@@ -37,6 +37,7 @@ async function getIDPGroupById(octokit, org, id) {
 
 async function getIDPGroupByName(octokit, org, name) {
   const idpGroups = await getIDPGroups(octokit, org);
+  core.debug(`Got groups ${JSON.stringify(idpGroups)}`);
   if (!idpGroups) {
     core.info("No idp groups returned");
     return;
