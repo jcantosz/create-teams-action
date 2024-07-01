@@ -10,9 +10,9 @@ async function addIDPGroupToTeam(octokit, org, type, teamSlug, groupName) {
   const idpGroup = await idpFunctions.getIDPGroupByName(octokit, org, groupName);
   if (idpGroup) {
     await idpFunctions.addGroupToTeam(octokit, org, teamSlug, idpGroup);
-    core.info(`group "${groupName}" not found, added to team "${teamSlug}" `);
+    core.info(`Group "${groupName}" found! Added to team "${teamSlug}" `);
   } else {
-    core.warning(`group "${groupName}" not found, could not be added to team "${teamSlug}" `);
+    core.warning(`Group "${groupName}" not found, could not be added to team "${teamSlug}" `);
   }
 }
 

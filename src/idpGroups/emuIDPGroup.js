@@ -1,4 +1,5 @@
 const core = require("@actions/core");
+var _cachedIDPGroups;
 async function addGroupToTeam(octokit, org, teamSlug, group) {
   await octokit.request("PATCH /orgs/{org}/teams/{team_slug}/external-groups", {
     org: org,
@@ -11,12 +12,19 @@ async function addGroupToTeam(octokit, org, teamSlug, group) {
 }
 
 async function getIDPGroups(octokit, org) {
-  return await octokit.paginate("GET /orgs/{org}/external-groups", {
-    org: org,
-    headers: {
-      "X-GitHub-Api-Version": "2022-11-28",
-    },
-  });
+  if (!_cachedIDPGroups) {
+    _cachedIDPGroups = await octokit.paginate(
+      "GET /orgs/{org}/external-groups",
+      {
+        org: org,
+        headers: {
+          "X-GitHub-Api-Version": "2022-11-28",
+        },
+      },
+      (response) => response.data.groups
+    );
+  }
+  return _cachedIDPGroups;
 }
 
 async function getIDPGroupById(octokit, org, id) {
@@ -42,7 +50,7 @@ async function getIDPGroupByName(octokit, org, name) {
     core.info("No idp groups returned");
     return;
   }
-  for (const group of idpGroups.groups) {
+  for (const group of idpGroups) {
     if (group.group_name == name) {
       core.info(`Group found! id: "${group.group_id}" name: "${group.group_name}"`);
       return group;
